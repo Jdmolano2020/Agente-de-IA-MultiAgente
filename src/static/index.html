@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-LLM Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chat-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .chat-section:hover {
+            transform: translateY(-5px);
+        }
+
+        .status-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .input-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .response-area {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            min-height: 100px;
+        }
+
+        .response-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .metadata {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .metadata-item {
+            display: inline-block;
+            margin-right: 20px;
+            margin-bottom: 5px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background-color: #48bb78;
+        }
+
+        .status-offline {
+            background-color: #f56565;
+        }
+
+        .status-warning {
+            background-color: #ed8936;
+        }
+
+        .models-list {
+            margin-top: 15px;
+        }
+
+        .model-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .model-name {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .model-stats {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f56565 0%, #ed8936 50%, #48bb78 100%);
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Multi-LLM Agent</h1>
+            <p>Agente de IA avanzado que combina múltiples modelos de lenguaje para respuestas superiores</p>
+        </div>
+
+        <div class="main-content">
+            <div class="chat-section">
+                <h2 class="section-title">💬 Consulta al Agente</h2>
+                
+                <div class="input-group">
+                    <label for="prompt">Escribe tu pregunta:</label>
+                    <textarea 
+                        id="prompt" 
+                        placeholder="Ejemplo: ¿Cuáles son las mejores prácticas para el desarrollo de software?"
+                    ></textarea>
+                </div>
+
+                <button class="btn" onclick="processQuery()" id="submitBtn">
+                    Enviar Consulta
+                </button>
+
+                <div class="response-area" id="responseArea" style="display: none;">
+                    <div class="response-text" id="responseText"></div>
+                    <div class="metadata" id="responseMetadata"></div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <h2 class="section-title">📊 Estado del Sistema</h2>
+                
+                <div id="systemStatus">
+                    <div class="model-item">
+                        <span class="status-indicator status-warning"></span>
+                        <span>Cargando estado del sistema...</span>
+                    </div>
+                </div>
+
+                <div class="models-list" id="modelsList">
+                    <!-- Los modelos se cargarán dinámicamente -->
+                </div>
+
+                <button class="btn" onclick="refreshStatus()" style="margin-top: 20px;">
+                    🔄 Actualizar Estado
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let isProcessing = false;
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStatus();
+        });
+
+        // Procesar consulta
+        async function processQuery() {
+            const prompt = document.getElementById('prompt').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const responseArea = document.getElementById('responseArea');
+            const responseText = document.getElementById('responseText');
+            const responseMetadata = document.getElementById('responseMetadata');
+            const confidenceFill = document.getElementById('confidenceFill');
+
+            if (!prompt) {
+                alert('Por favor, escribe una pregunta.');
+                return;
+            }
+
+            if (isProcessing) {
+                return;
+            }
+
+            isProcessing = true;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span>Procesando...';
+
+            try {
+                const response = await fetch('/api/agent/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        parameters: {}
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Mostrar respuesta
+                    responseText.innerHTML = data.response.text;
+                    
+                    // Mostrar metadatos
+                    const metadata = data.metadata;
+                    const analysis = data.analysis;
+                    
+                    responseMetadata.innerHTML = `
+                        <div class="metadata-item"><strong>Tiempo:</strong> ${metadata.total_processing_time.toFixed(2)}s</div>
+                        <div class="metadata-item"><strong>Modelos exitosos:</strong> ${metadata.successful_models}</div>
+                        <div class="metadata-item"><strong>Consenso:</strong> ${(metadata.consensus_score * 100).toFixed(1)}%</div>
+                        <div class="metadata-item"><strong>Métodos:</strong> ${data.response.refinement_methods.join(', ')}</div>
+                    `;
+
+                    // Mostrar barra de confianza
+                    const confidence = data.response.confidence_score * 100;
+                    confidenceFill.style.width = confidence + '%';
+                    confidenceFill.title = `Confianza: ${confidence.toFixed(1)}%`;
+
+                    responseArea.style.display = 'block';
+                } else {
+                    alert('Error: ' + data.message);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error de conexión. Por favor, intenta de nuevo.');
+            } finally {
+                isProcessing = false;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Enviar Consulta';
+            }
+        }
+
+        // Actualizar estado del sistema
+        async function refreshStatus() {
+            const systemStatus = document.getElementById('systemStatus');
+            const modelsList = document.getElementById('modelsList');
+
+            try {
+                // Obtener estado del sistema
+                const statusResponse = await fetch('/api/agent/status');
+                const statusData = await statusResponse.json();
+
+                // Obtener información de modelos
+                const modelsResponse = await fetch('/api/agent/models');
+                const modelsData = await modelsResponse.json();
+
+                // Actualizar estado del sistema
+                const status = statusData.status;
+                let statusClass = 'status-offline';
+                let statusText = 'Sistema no disponible';
+
+                if (status === 'initialized') {
+                    const availableAdapters = statusData.component_status.available_adapters;
+                    const totalAdapters = statusData.component_status.total_adapters;
+                    
+                    if (availableAdapters > 0) {
+                        statusClass = 'status-online';
+                        statusText = `Sistema operativo (${availableAdapters}/${totalAdapters} modelos)`;
+                    } else {
+                        statusClass = 'status-warning';
+                        statusText = 'Sistema iniciado sin modelos disponibles';
+                    }
+                } else if (status === 'not_initialized') {
+                    statusClass = 'status-warning';
+                    statusText = 'Sistema inicializando...';
+                }
+
+                systemStatus.innerHTML = `
+                    <div class="model-item">
+                        <span class="status-indicator ${statusClass}"></span>
+                        <span>${statusText}</span>
+                    </div>
+                `;
+
+                // Actualizar lista de modelos
+                if (modelsData.models) {
+                    modelsList.innerHTML = modelsData.models.map(model => `
+                        <div class="model-item">
+                            <div>
+                                <div class="model-name">
+                                    <span class="status-indicator ${model.available ? 'status-online' : 'status-offline'}"></span>
+                                    ${model.name}
+                                </div>
+                                <div class="model-stats">
+                                    Solicitudes: ${model.total_requests} | 
+                                    Error: ${(model.error_rate * 100).toFixed(1)}% | 
+                                    Latencia: ${model.average_latency.toFixed(2)}s
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    modelsList.innerHTML = '<div class="model-item">No hay información de modelos disponible</div>';
+                }
+
+            } catch (error) {
+                console.error('Error refreshing status:', error);
+                systemStatus.innerHTML = `
+                    <div class="model-item">
+                        <span class="status-indicator status-offline"></span>
+                        <span>Error obteniendo estado del sistema</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Permitir envío con Enter (Ctrl+Enter)
+        document.getElementById('prompt').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                processQuery();
+            }
+        });
+
+        // Actualizar estado cada 30 segundos
+        setInterval(refreshStatus, 30000);
+    </script>
+</body>
+</html>
+

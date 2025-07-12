@@ -1,0 +1,19 @@
+Eres experto en IA y aprendizaje automático con amplia experiencia en modelos de lenguaje grandes (LLM) y sistemas multiagente. Necesito tus conocimientos especializados para diseñar y construir un agente de IA avanzado que aproveche múltiples LLM gratuitos para analizar, comparar y refinar las respuestas y lograr una precisión y calidad óptimas.
+
+Requisitos clave:
+
+Selección de modelos: identificar e integrar al menos cinco LLM de alta calidad y disponibles gratuitamente (por ejemplo, variantes de GPT, LLaMA, Mistral, Claude, gemini, deepseek u otros) con fortalezas diferenciadas.
+
+Manejo de solicitudes: desarrollar un sistema para procesar las consultas de los usuarios, distribuirlas a todos los modelos seleccionados en paralelo y recopilar respuestas de manera eficiente.
+
+Comparación de respuestas: Implementar un mecanismo de comparación sólido para detectar discrepancias, errores o inconsistencias entre los resultados del modelo.
+
+Corrección y mejora de errores: aplicar técnicas avanzadas (por ejemplo, votación basada en consenso, verificación de hechos o validación lógica) para refinar las respuestas corrigiendo imprecisiones o fusionando los mejores elementos de cada modelo.
+
+Optimización de salida: garantizar que la respuesta final sea coherente, precisa y superior a la salida de cualquier modelo individual, con un razonamiento claro de las mejoras realizadas.
+
+Escalabilidad y eficiencia: optimice el sistema para lograr baja latencia y eficiencia de recursos, teniendo en cuenta los límites de la API o las restricciones del modelo local.
+
+Bucle de retroalimentación del usuario: incorporar un método para que los usuarios marquen las respuestas insatisfactorias, lo que permite el aprendizaje continuo y el ajuste del modelo.
+
+Aproveche su experiencia en arquitectura de IA y evaluación de modelos para ofrecer una solución que maximice la confiabilidad, el rendimiento y la adaptabilidad. El sistema debe ser modular y configurable para futuras incorporaciones o actualizaciones de modelos.
