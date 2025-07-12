@@ -1,4 +1,8 @@
 import os
+
+# Configurar la variable de entorno para OpenAI API Key
+os.environ['OPENAI_API_KEY'] = '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'  
+# <-- Reemplaza por tu clave real
 import sys
 import asyncio
 import logging
