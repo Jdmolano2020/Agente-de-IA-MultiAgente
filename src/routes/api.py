@@ -281,7 +281,7 @@ async def initialize_agent(config: dict = None):
     try:
         logger.info("Inicializando agente multi-LLM...")
         
-        # Configuración por defecto
+        # Configuración por defecto: SIEMPRE incluye OpenAI y Hugging Face
         default_config = {
             'timeout': 30.0,
             'enable_discrepancy_analysis': True,
@@ -291,9 +291,16 @@ async def initialize_agent(config: dict = None):
                     'type': 'openai',
                     'model_name': 'gpt-3.5-turbo',
                     'config': {}
+                },
+                {
+                    'type': 'huggingface',
+                    'model_name': 'distilgpt2',
+                    'config': {
+                        'device': 'cpu',
+                        'max_length': 128,
+                        'use_pipeline': True
+                    }
                 }
-                # Nota: Los modelos de Hugging Face requieren mucha memoria
-                # Se pueden añadir si hay recursos suficientes
             ]
         }
         
