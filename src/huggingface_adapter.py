@@ -30,18 +30,18 @@ class HuggingFaceAdapter(BaseLLMAdapter):
     async def initialize(self) -> bool:
         """Inicializa el modelo de Hugging Face."""
         try:
-            logger.info(f"{self.model_name}: Iniciando carga del modelo...")
+            logger.info(f"{self.model_name}: Iniciando carga del modelo Hugging Face.")
             
             # Ejecutar la carga en un hilo separado para no bloquear
             loop = asyncio.get_event_loop()
             await loop.run_in_executor(None, self._load_model)
             
             self.is_initialized = True
-            logger.info(f"{self.model_name}: Modelo cargado correctamente")
+            logger.info(f"{self.model_name}: Modelo cargado correctamente Hugging Face.")
             return True
             
         except Exception as e:
-            logger.error(f"{self.model_name}: Error cargando modelo: {str(e)}")
+            logger.error(f"{self.model_name}: Error cargando modelo Hugging Face.: {str(e)}")
             return False
     
     def _load_model(self):
@@ -81,7 +81,7 @@ class HuggingFaceAdapter(BaseLLMAdapter):
     async def generate_response(self, prompt: str, **kwargs) -> LLMResponse:
         """Genera una respuesta usando el modelo de Hugging Face."""
         if not self.is_initialized:
-            raise RuntimeError(f"{self.model_name}: Adaptador no inicializado")
+            raise RuntimeError(f"{self.model_name}: Adaptador no inicializado de Hugging Face")
         
         start_time = time.time()
         

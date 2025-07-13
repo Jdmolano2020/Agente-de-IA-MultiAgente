@@ -52,6 +52,10 @@ class RequestManager:
         tasks = []
         
         for name, adapter in self.adapters.items():
+            if 'huggingface' in name.lower() or 'distilgpt2' in name.lower():
+                logger.info(f"[FORZADO] Inicializando adaptador Hugging Face: {name}")
+            else:
+                logger.info(f"Inicializando adaptador: {name}")
             task = asyncio.create_task(adapter.initialize())
             tasks.append((name, task))
         

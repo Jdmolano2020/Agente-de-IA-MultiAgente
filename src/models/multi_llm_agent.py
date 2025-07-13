@@ -92,10 +92,10 @@ class MultiLLMAgent:
             },
             {
                 'type': 'huggingface',
-                'model_name': 'microsoft/DialoGPT-medium',
+                'model_name': 'distilgpt2',
                 'config': {
                     'device': 'cpu',
-                    'max_length': 512,
+                    'max_length': 128,
                     'use_pipeline': True
                 }
             }

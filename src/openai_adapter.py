@@ -42,11 +42,11 @@ class OpenAIAdapter(BaseLLMAdapter):
             # Probar la conexión
             await self.client.models.list()
             self.is_initialized = True
-            logger.info(f"{self.model_name}: Inicializado correctamente")
+            logger.info(f"{self.model_name}: Inicializado correctamente con OpenAI")
             return True
             
         except Exception as e:
-            logger.error(f"{self.model_name}: Error en inicialización: {str(e)}")
+            logger.error(f"{self.model_name}: Error en inicialización con OpenAI: {str(e)}")
             return False
     
     async def generate_response(self, prompt: str, **kwargs) -> LLMResponse:
