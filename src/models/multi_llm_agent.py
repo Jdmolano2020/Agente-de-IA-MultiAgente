@@ -7,7 +7,7 @@ import asyncio
 import time
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-import logging
+from logger import setup_logging
 
 from ..llm_adapter import BaseLLMAdapter, LLMResponse
 from ..openai_adapter import OpenAIAdapter
@@ -16,7 +16,8 @@ from ..request_manager import RequestManager, ProcessingResult
 from ..response_comparator import ResponseComparator, ComparisonResult, DiscrepancyAnalysis
 from ..response_refiner import ResponseRefiner, RefinedResponse
 
-logger = logging.getLogger(__name__)
+# Configurar logging
+logger = setup_logging()
 
 
 @dataclass

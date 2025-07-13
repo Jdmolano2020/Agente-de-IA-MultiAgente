@@ -7,7 +7,7 @@ import asyncio
 from typing import Dict, Any, Optional
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
-from .llm_adapter import BaseLLMAdapter, LLMResponse
+from llm_adapter import BaseLLMAdapter, LLMResponse
 import time
 from logger import setup_logging
 
