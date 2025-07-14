@@ -292,15 +292,7 @@ async def initialize_agent(config: dict = None):
                     'model_name': 'gpt-3.5-turbo',
                     'config': {}
                 },
-                {
-                    'type': 'huggingface',
-                    'model_name': 'distilgpt2',
-                    'config': {
-                        'device': 'cpu',
-                        'max_length': 128,
-                        'use_pipeline': True
-                    }
-                }
+                
             ]
         }
         
